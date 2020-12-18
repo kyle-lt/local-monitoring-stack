@@ -1,0 +1,96 @@
+version: '3.4'
+
+# This Compose file manages various Open Source Monitoring Components.
+# Local docker-compose services that utilize these components will
+# reach them via external network named "monitoring"
+# They will use environment variables that carry the container
+# name that is used by each respective service, e.g.,
+# JAEGER_HOSTNAME=jaeger
+# LOKI_HOSTNAME=loki
+# This way, when using Kubernetes services, they can hold the service name values, e.g.,
+# JAEGER_HOSTNAME=jaeger
+# LOKI_HOSTNAME=loki
+
+networks:
+  monitoring:
+    external: true
+
+services:
+  # PROMETHEUS
+  prometheus:
+    image: prom/prometheus:latest
+    restart: always
+    container_name: prometheus
+    ports:
+    - "9091:9090"
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - monitoring
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+      - "14250:14250"
+    networks:
+      - monitoring
+
+  # LOKI
+  loki:
+    image: grafana/loki:1.6.0
+    container_name: loki
+    restart: always
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - monitoring
+
+  # GRAFANA
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    volumes:
+    - ./datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring
+
+  appdmachine:
+    image: appdynamics/machine-agent-analytics:latest
+    container_name: appdmachine
+    environment:
+      APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: "$APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY"
+      APPDYNAMICS_AGENT_ACCOUNT_NAME: "$APPDYNAMICS_AGENT_ACCOUNT_NAME"
+      APPDYNAMICS_CONTROLLER_HOST_NAME: "$APPDYNAMICS_CONTROLLER_HOST_NAME"
+      APPDYNAMICS_CONTROLLER_PORT: "$APPDYNAMICS_CONTROLLER_PORT"
+      APPDYNAMICS_CONTROLLER_SSL_ENABLED: "$APPDYNAMICS_CONTROLLER_SSL_ENABLED"
+      APPDYNAMICS_SIM_ENABLED: "$APPDYNAMICS_SIM_ENABLED"
+      APPDYNAMICS_DOCKER_ENABLED: "$APPDYNAMICS_DOCKER_ENABLED"
+      APPDYNAMICS_AGENT_ENABLE_CONTAINERIDASHOSTID: "$APPDYNAMICS_AGENT_ENABLE_CONTAINERIDASHOSTID"
+      EVENT_ENDPOINT: "$EVENT_ENDPOINT"
+      APPDYNAMICS_AGENT_GLOBAL_ACCOUNT_NAME: "$APPDYNAMICS_AGENT_GLOBAL_ACCOUNT_NAME"
+      APPDYNAMICS_AGENT_UNIQUE_HOST_ID: "$APPDYNAMICS_AGENT_UNIQUE_HOST_ID"
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+    volumes:
+      - /proc:/hostroot/proc:ro
+      - /sys:/hostroot/sys:ro
+      - /etc:/hostroot/etc:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # PROMTAIL - DISABLED FOR NOW
+  #promtail:
+    #image: grafana/promtail:1.6.0
+    #volumes:
+      #- /var/log:/var/log
+    #command: -config.file=/etc/promtail/config.yml
