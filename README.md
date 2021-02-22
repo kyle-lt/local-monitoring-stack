@@ -85,7 +85,7 @@ OpenTelemetry Collector.
 
 OpenTelemetry development Image, pulled from [`otel/opentelemetry-collector-dev:latest`](https://hub.docker.com/r/otel/opentelemetry-collector-dev).  
 
-There is no UI, merely a pipeline that is configured via `
+There is no UI, merely a pipeline that is configured via `appd-otel-collector-config.yaml`.
 
 
 ## More Notes on Configuration
@@ -128,7 +128,7 @@ APPDYNAMICS_AGENT_ENABLE_CONTAINERIDASHOSTID=<true_or_false>
 APPDYNAMICS_AGENT_UNIQUE_HOST_ID=DockerForMacOS
 ```  
 
-#### AppDynamics Analytics Agent Configuration - N/A
+#### AppDynamics OpenTelemetry Ingestion Service API Key
 API Key for the AppDynamics OpenTelemetry Ingestion Service.
 ```bash
 # AppD OTel Ingest API Key
