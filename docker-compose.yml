@@ -96,6 +96,7 @@ services:
       - "13133:13133" # health_check extension
       - "4317:4317"   # OTLP gRPC receiver
       - "55670:55679" # zpages extension
+      - "55681:55681" # http
     environment:
       X_API_KEY: "$X_API_KEY"
     depends_on:
@@ -125,30 +126,30 @@ services:
       #- monitoring
 
   # APPD MACHINE AGENT
-  appdmachine:
-    image: appdynamics/machine-agent-analytics:latest
-    container_name: appdmachine
-    environment:
-      APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: "$APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY"
-      APPDYNAMICS_AGENT_ACCOUNT_NAME: "$APPDYNAMICS_AGENT_ACCOUNT_NAME"
-      APPDYNAMICS_CONTROLLER_HOST_NAME: "$APPDYNAMICS_CONTROLLER_HOST_NAME"
-      APPDYNAMICS_CONTROLLER_PORT: "$APPDYNAMICS_CONTROLLER_PORT"
-      APPDYNAMICS_CONTROLLER_SSL_ENABLED: "$APPDYNAMICS_CONTROLLER_SSL_ENABLED"
-      APPDYNAMICS_SIM_ENABLED: "$APPDYNAMICS_SIM_ENABLED"
-      APPDYNAMICS_DOCKER_ENABLED: "$APPDYNAMICS_DOCKER_ENABLED"
-      APPDYNAMICS_AGENT_ENABLE_CONTAINERIDASHOSTID: "$APPDYNAMICS_AGENT_ENABLE_CONTAINERIDASHOSTID"
-      EVENT_ENDPOINT: "$EVENT_ENDPOINT"
-      APPDYNAMICS_AGENT_GLOBAL_ACCOUNT_NAME: "$APPDYNAMICS_AGENT_GLOBAL_ACCOUNT_NAME"
-      APPDYNAMICS_AGENT_UNIQUE_HOST_ID: "$APPDYNAMICS_AGENT_UNIQUE_HOST_ID"
-    ports:
-      - "9090:9090"
-    networks:
-      - monitoring
-    volumes:
-      - /proc:/hostroot/proc:ro
-      - /sys:/hostroot/sys:ro
-      - /etc:/hostroot/etc:ro
-      - /var/run/docker.sock:/var/run/docker.sock
+  #appdmachine:
+    #image: appdynamics/machine-agent-analytics:latest
+    #container_name: appdmachine
+    #environment:
+      #APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY: "$APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY"
+      #APPDYNAMICS_AGENT_ACCOUNT_NAME: "$APPDYNAMICS_AGENT_ACCOUNT_NAME"
+      #APPDYNAMICS_CONTROLLER_HOST_NAME: "$APPDYNAMICS_CONTROLLER_HOST_NAME"
+      #APPDYNAMICS_CONTROLLER_PORT: "$APPDYNAMICS_CONTROLLER_PORT"
+      #APPDYNAMICS_CONTROLLER_SSL_ENABLED: "$APPDYNAMICS_CONTROLLER_SSL_ENABLED"
+      #APPDYNAMICS_SIM_ENABLED: "$APPDYNAMICS_SIM_ENABLED"
+      #APPDYNAMICS_DOCKER_ENABLED: "$APPDYNAMICS_DOCKER_ENABLED"
+      #APPDYNAMICS_AGENT_ENABLE_CONTAINERIDASHOSTID: "$APPDYNAMICS_AGENT_ENABLE_CONTAINERIDASHOSTID"
+      #EVENT_ENDPOINT: "$EVENT_ENDPOINT"
+      #APPDYNAMICS_AGENT_GLOBAL_ACCOUNT_NAME: "$APPDYNAMICS_AGENT_GLOBAL_ACCOUNT_NAME"
+      #APPDYNAMICS_AGENT_UNIQUE_HOST_ID: "$APPDYNAMICS_AGENT_UNIQUE_HOST_ID"
+    #ports:
+      #- "9090:9090"
+    #networks:
+      #- monitoring
+    #volumes:
+      #- /proc:/hostroot/proc:ro
+      #- /sys:/hostroot/sys:ro
+      #- /etc:/hostroot/etc:ro
+      #- /var/run/docker.sock:/var/run/docker.sock
 
   # PROMTAIL - DISABLED FOR NOW
   #promtail:

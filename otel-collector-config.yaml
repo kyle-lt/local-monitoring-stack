@@ -2,6 +2,21 @@ receivers:
   otlp:
     protocols:
       grpc:
+      http:
+
+processors:
+  resource:
+    attributes:
+      - key: appdynamics.controller.account
+        action: upsert
+        value: "my-appd-account"
+      - key: appdynamics.controller.host
+        action: upsert
+        value: "my-controller-host"
+      - key: appdynamics.controller.port
+        action: upsert
+        value: 443
+  batch:
 
 exporters:
   #prometheus:
@@ -9,18 +24,21 @@ exporters:
     #namespace: promexample
     #const_labels:
       #label1: value1
-  #logging:
 
   #zipkin:
     #endpoint: "http://zipkin-all-in-one:9411/api/v2/spans"
     #format: proto
 
+  logging:
+    loglevel: debug
+
   jaeger:
     endpoint: host.docker.internal:14250
     insecure: true
 
-processors:
-  batch:
+  otlphttp:
+    endpoint: https://my-appd-endpoint.com
+    headers: {"x-api-key": "${X_API_KEY}"}
 
 extensions:
   health_check:
@@ -34,9 +52,9 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
+      processors: [resource, batch]
       #exporters: [logging, zipkin, jaeger]
-      exporters: [jaeger]
+      exporters: [logging, jaeger, otlphttp]
     #metrics:
       #receivers: [otlp]
       #processors: [batch]
