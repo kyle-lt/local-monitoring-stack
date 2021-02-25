@@ -35,7 +35,11 @@ In order to run this project, you'll need:
 
    > __IMPORTANT:__ Detailed information regarding `appd-otel-collector-config.yaml` file can be found [below](#appd-otel-collector-config.yaml-file).  This __MUST__ be done for this project to work!
 
-4. Use Docker Compose to start
+4. Create external docker network named `monitoring`.
+```bash
+$ docker network create monitoring
+```
+5. Use Docker Compose to start
 ```bash
 $ docker-compose up -d
 ```
